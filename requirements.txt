@@ -1,0 +1,4 @@
+google-generativeai>=0.8.0
+python-dotenv>=1.0.0
+colorama>=0.4.6
+yt-dlp>=2024.0.0

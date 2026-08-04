@@ -1,9 +1,8 @@
-# AI Agent YouTube Subtitle Knowledge Base Builder (Agent-to-Agent Guide)
+# 🤖 AI Agent Automated Knowledge Vault Builder (Agent-to-Agent Specification)
 
-This repository outlines the automated workflow for AI Agents to extract subtitles from a YouTube channel, parse and clean the transcripts, build a structured three-layer Obsidian Second Brain database, and utilize it for automated lesson/teaching planning.
-
-> [!NOTE]
-> This guide is formatted specifically for consumption by agentic AI coders (such as Claude Code, Codex, AntiGravity, OpenCode). If you are an Agent reading this repo, follow the instructions and run the scripts below to replicate the knowledge base construction.
+> [!IMPORTANT]
+> **Instruction for AI Coders & Autonomous Agents (Claude Code, AntiGravity, Codex, OpenCode, Cursor, Windsurf)**:
+> If you are an AI Agent reading this repository, follow the execution instructions below step-by-step to replicate, extract, clean, build, and maintain the Three-Layer Obsidian Knowledge Base from YouTube video transcripts.
 
 ---
 
@@ -11,66 +10,120 @@ This repository outlines the automated workflow for AI Agents to extract subtitl
 
 ```mermaid
 graph TD
-    Channel[@sensebar Channel] -->|1. extract_videos.py| VideoList[Filtered Video List & URLs]
-    VideoList -->|2. download_all_subs.py| TempVTT[Raw VTT Subtitles]
-    TempVTT -->|3. VTT Cleaning Engine| CleanMD[Deduplicated Markdown Files]
-    CleanMD -->|4. Obsidian Vault| ThreeLayer[Three-Layer Vault Structure]
-    ThreeLayer -->|5. Weekly Agent Task| KB[Structured Knowledge Base]
+    YouTubeChannel[@sensebar Channel] -->|1. extract_videos.py| VideoList[Filtered Video List & URLs]
+    VideoList -->|2. download_all_subs.py| RawSubs[Cleaned Transcript Markdown Files]
+    RawSubs -->|3. Establish Vault| ThreeLayer[Three-Layer Vault Structure]
+    ThreeLayer -->|Clipping/| RawClipping[Clipping/ - Immutable Raw Transcripts]
+    ThreeLayer -->|創作庫/| RawCreation[創作庫/ - Immutable User Drafts]
+    ThreeLayer -->|知識庫/| ManagedKB[知識庫/ - Agent-Managed Knowledge]
+    ManagedKB -->|4. Agent Execution| Demos[run_demo.py - 5-Stage Agent Demos]
+    ManagedKB -->|5. Weekly Schedule| KBGraph[Auto-Growing Obsidian Knowledge Graph]
 ```
 
 ---
 
-## 🛠️ Step-by-Step Implementation Workflow
+## 🛠️ Step-by-Step Agent Execution Workflow
 
-### Step 1: Filter Channel Videos & Extract URLs
-Use the Python script `extract_videos.py` to fetch video metadata from the target YouTube channel, filter them by specific keywords (`claude`, `codex`, `antigravity`, `opencode`, `agent`), and export a plain list of URLs.
+### Step 1: Environment & Dependency Setup
+Initialize the Python environment and install required dependencies.
 
-* **Script**: `extract_videos.py`
-* **Output**: `sensebar_ai_urls.txt`
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+```
 
-### Step 2: Download Subtitles & Clean VTT
-Use the script `download_all_subs.py` to loop through the extracted URLs, download subtitles using `yt-dlp`, and clean the output.
-
-* **Cleaning Rules implemented in script**:
-  1. Remove VTT metadata headers and timestamps (e.g. `00:00:01.000 --> 00:00:03.000`).
-  2. Strip HTML/XML tags (e.g. `<c>`, `</c>`, `<00:00:01.000>`).
-  3. **Deduplicate scrolling lines**: YouTube auto-captions replicate scrolling text. The script performs consecutive line deduplication to yield readable transcript blocks.
-  4. Write clean Markdown files with video titles as H1 and link back to the source YouTube URL.
-
-### Step 3: Establish the Three-Layer Obsidian Vault
-Structure the destination Obsidian vault (the Agent's "Second Brain") into three distinct folders:
-1. `Clipping/` (External Sources): Store all the generated transcript markdown files here. **Do not modify these raw files.**
-2. `創作庫/` (Creation Vault): Store your own scripts, lecture drafts, and original notes here. **Do not modify these raw files.**
-3. `知識庫/` (Knowledge Base): Managed entirely by the Agent. This is where structured knowledge, indexes, and theme folders go.
-
-### Step 4: Run Weekly Agent Restructuring (Agent System Prompt)
-As an Agent, schedule a recurring task (e.g. every Sunday) to run the **Weekly Knowledge Restructure**:
-1. Scan `Clipping/` and `創作庫/` for new files.
-2. Digest the transcripts, extracting key summaries, keywords, and topics.
-3. Write/append structured notes into the corresponding folders in `知識庫/` (e.g. `AI工作流/`, `教學趨勢/`).
-4. Perform a health check (Lint) to identify content contradictions, link errors, or missing cross-references, mapping them in the Obsidian Graph View.
-5. Update the global `Index` and `Log` notes to document changes.
-
-### Step 5: Process Teaching Files & Write Plans (Downstream Tasks)
-Once the knowledge base is populated:
-* **Writing Lesson/Curriculum Plans**: Place the school's plan template and publisher's syllabus in a folder. Instruct the Agent to read both files and automatically merge and fill the template.
-* **Auto-Downloading & OCR**: Instruct the Agent to search the web for exam PDFs (e.g. "國中教育會考"), download them, read questions using OCR, and extract them into new study sheets.
-* **Web Interactive Cockpit (教學駕駛艙)**: Prompt the Agent to compile the extracted scripts and slides into an interactive HTML page (with embedded videos, timers, draw-boards, and quizzes) and host it publicly on GitHub Pages.
+* **`requirements.txt`**: Includes `google-generativeai`, `python-dotenv`, `colorama`, and `yt-dlp`.
+* **`.env`**: (Optional) Populate `GEMINI_API_KEY` for live LLM reasoning.
 
 ---
 
-## 📄 Scripts in this Repository
+### Step 2: Extract & Filter Video Metadata
+Run `extract_videos.py` to scan YouTube channel `@sensebar` (videos and live streams) and filter AI-related content using keywords: `["claude", "codex", "antigravity", "opencode", "agent", "googlea"]`.
 
-The scripts are located at the root of the workspace:
-* [extract_videos.py](file:///c:/2026AI_agent/AI_AgentEP01_用 Agent 來學習 Agent/extract_videos.py)
-* [download_all_subs.py](file:///c:/2026AI_agent/AI_AgentEP01_用 Agent 來學習 Agent/download_all_subs.py)
+```bash
+python extract_videos.py
+```
+
+* **Outputs**:
+  - `sensebar_ai_urls.txt`: Plain list of matching YouTube video URLs (1 URL per line, ready for NotebookLM or `download_all_subs.py`).
+  - `sensebar_ai_videos.md`: Markdown summary table of filtered videos with direct links.
+  - `sensebar_notebooklm_urls.md`: Clean URL list formatted for direct paste into NotebookLM.
 
 ---
 
-## 🤖 Instructions for the executing Agent
-1. Clone this repository.
-2. Install Python dependencies: `pip install yt-dlp`.
-3. Run `python extract_videos.py` to extract target videos.
-4. Run `python download_all_subs.py` to build the `subtitles/` folder.
-5. Create the Obsidian folders (`Clipping`, `創作庫`, `知識庫`) and copy the contents of `subtitles/` into `Clipping/`.
-6. Initiate your system prompt to maintain the three-layer knowledge vault.
+### Step 3: Auto-Download Subtitles & Clean Transcripts
+Run `download_all_subs.py` to iterate through `sensebar_ai_urls.txt`, fetch subtitles via `yt-dlp`, and clean the output into readable Markdown.
+
+```bash
+python download_all_subs.py
+```
+
+* **Cleaning Engine Rules**:
+  1. Strip WEBVTT headers, language flags, and timestamps (`00:00:01.000 --> 00:00:03.000`).
+  2. Strip inline XML/HTML tags (e.g. `<c>`, `</c>`).
+  3. **Deduplicate scrolling captions**: YouTube auto-captions replicate scrolling text; consecutive identical lines are automatically collapsed.
+  4. Write clean Markdown files formatted with Video Title H1 and link back to the source YouTube URL.
+  5. Store files into `Clipping/`. Existing transcript files are automatically skipped for resume capability.
+
+---
+
+### Step 4: Establish the Three-Layer Obsidian Vault
+Follow the **Andrej Karpathy (卡帕西) LLM Note Management Principle**: *Raw data must remain immutable; the AI Agent actively manages and expands the structured knowledge graph.*
+
+1. **`Clipping/` (External Raw Data)**: Stores raw YouTube transcript Markdown files. **Do not edit raw files.**
+2. **`創作庫/` (User Drafts & Creation)**: Stores user-written scripts, lesson plans, and original notes. **Do not edit raw files.**
+3. **`知識庫/` (Agent-Managed Vault)**: Managed entirely by the Agent. Contains structured topic notes, cross-reference links, tags, and index files.
+
+---
+
+### Step 5: Test & Run Agent Demonstrations
+Run `run_demo.py` to verify the 5 core AI Agent execution stages:
+
+```bash
+# Run interactive menu
+python run_demo.py
+
+# Or run full 5-stage automated suite
+python run_demo.py A
+```
+
+* **Stage 1 (`simple_agent.py`)**: ReAct Loop (`Thought -> Action -> Observation`).
+* **Stage 2 (`demo_stage2_function_calling.py`)**: Native Function Calling with JSON Schema.
+* **Stage 3 (`demo_stage3_memory.py`)**: Conversation Memory & Sliding Window Context.
+* **Stage 4 (`demo_stage4_rag.py`)**: Local RAG Search across `Clipping/` transcripts.
+* **Stage 5 (`demo_stage5_multi_agent.py`)**: Multi-Agent system (Planner, Researcher, Writer).
+
+---
+
+### Step 6: Weekly Agent Restructuring (Agent System Prompt)
+
+As an executing Agent, schedule a recurring task (e.g. every Sunday) to execute **Weekly Knowledge Restructure**:
+
+1. **Scan**: Read new Markdown files in `Clipping/` and `創作庫/`.
+2. **Digest**: Extract key concepts, definitions, tools mentioned, and action steps.
+3. **Synthesize**: Write/append structured notes into `知識庫/<Topic>/` (e.g. `知識庫/AI工作流/`, `知識庫/教学方法/`).
+4. **Graph Link**: Insert Obsidian `[[WikiLinks]]` between related concepts to build the knowledge graph.
+5. **Index & Log**: Update `知識庫/Index.md` and `知識庫/Log.md` with timestamps and summary of changes.
+
+---
+
+## 📂 Repository File Index
+
+| File / Folder | Purpose |
+| --- | --- |
+| **`README.md`** | Agent-to-Agent system specification & execution guide |
+| **`agents.md`** | Project roadmap & stage completion blueprint |
+| **`requirements.txt`** | Python package dependencies |
+| **`.env.example`** | Environment configuration template |
+| **`extract_videos.py`** | Script to fetch & filter YouTube channel videos |
+| **`download_all_subs.py`** | Script to download, clean & format VTT subtitles to MD |
+| **`tools.py`** | Custom Agent tools (Calculator, Clipping RAG search, Time) |
+| **`simple_agent.py`** | Stage 1 ReAct Agent controller |
+| **`demo_stage2_function_calling.py`** | Stage 2 Native Function Calling demo |
+| **`demo_stage3_memory.py`** | Stage 3 Memory & Context demo |
+| **`demo_stage4_rag.py`** | Stage 4 Knowledge RAG demo |
+| **`demo_stage5_multi_agent.py`** | Stage 5 Multi-Agent system demo |
+| **`run_demo.py`** | Unified terminal control console for all demos |
+| **`Clipping/`** | 91 clean transcript Markdown files |
+| **`sensebar_ai_urls.txt`** | 91 matching YouTube URLs (1 per line for NotebookLM) |
+| **`sensebar_notebooklm_urls.md`** | NotebookLM-ready URL list |

@@ -5,3 +5,5 @@ __pycache__/
 *.m4a
 *.mp3
 temp_sub.*
+.env
+*.log
