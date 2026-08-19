@@ -30,4 +30,4 @@
 
 - 頻道：[@sensebar](https://www.youtube.com/@sensebar)
 - 過濾關鍵字：claude, codex, antigravity, opencode, agent, googlea
-- 目前收錄：64 支影片（含 21 支直播）
+- 目前收錄：66 支影片（含 21 支直播；直播無字幕者不入 Clipping/）
