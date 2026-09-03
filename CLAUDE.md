@@ -11,10 +11,7 @@
 
 ## 聲音克隆
 
-需要以三師爸的聲音回答時，使用 `..\voxcpm_clone.py` 進行推論：
-
-- 參考音檔：`..\ref_voice.wav`
-- 範例輸出：`..\clone_demo.wav`、`..\ultimate_clone.wav`
+需要以三師爸的聲音輸出語音時，語音請用獨立 repo：`https://github.com/mathruffian-dot/voxcpm2-voice-cloner`（本 repo 不含任何音檔或推論腳本）。
 
 ## 資料夾結構
 

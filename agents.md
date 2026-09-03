@@ -1,67 +1,35 @@
-# AI Agent 專案工作藍圖 (Project Blueprint)
+# agents.md — 給 Codex / OpenCode 等 Agent 的入口
 
-本專案旨在透過「動手實作」與「循序漸進」的方式，從零開始理解並學習 AI Agent 的核心概念與設計模式。
+本 repo 的 Agent 指引以 **`CLAUDE.md`** 為準（知識庫查詢規則、資料夾結構、資料來源、聲音克隆），請先讀它；`README.md` 則是完整的建置流程說明。本檔只補充跨平台差異與最小操作摘要。
 
----
+## 一句話說明
 
-## 🗺️ 學習與實作路線圖 (Roadmap)
+用 Agent 把 YouTube 頻道 @sensebar 的 AI 相關影片字幕抓下來、清成可讀逐字稿，存進 `Clipping/`，再由 Agent 整理成 `知識庫/` 的結構化筆記。
 
-```mermaid
-graph TD
-    Stage1[EP01: 基礎 ReAct 循環] --> Stage2[EP02: Function Calling 整合]
-    Stage2 --> Stage3[EP03: 記憶機制 Memory]
-    Stage3 --> Stage4[EP04: RAG 知識庫檢索]
-    Stage4 --> Stage5[EP05: 多 Agent 協同運作]
+## 操作摘要（細節見 README.md）
+
+```bash
+pip install yt-dlp
+python extract_videos.py       # 掃頻道 → sensebar_ai_urls.txt（+ sensebar_ai_videos.md / sensebar_all_videos.md）
+python download_all_subs.py    # 依 urls 下載字幕、去重清理 → Clipping/*.md
 ```
 
-### 📍 Stage 1: 基礎 ReAct (Reasoning & Action) Agent (當前目標)
-* **目標**：從零手寫 ReAct 循環，理解 Agent 如何自主思考、選擇工具、觀察結果。
-* **關鍵實作**：
-  - [x] 設計 System Prompt 讓大模型理解 ReAct 規則 (Thought -> Action -> Observation)
-  - [x] 提供簡單的自訂 Python 函數作為 Tool (如計算機、模擬搜尋)
-  - [x] 實作 Agent Loop 控制器，解析模型輸出並調用 Tool
-  - [x] 使用彩色終端輸出，視覺化展示思考過程
+| 資料夾 | 角色 | 可否修改 |
+|--------|------|----------|
+| `Clipping/` | 原始逐字稿（外部來源） | 只讀，不修改 |
+| `創作庫/` | 三師爸自己的教材、講義、腳本 | 只讀，不修改 |
+| `知識庫/` | Agent 整理出的結構化知識、索引、紀錄 | Agent 負責維護 |
 
-### 📍 Stage 2: 工具與函數調用 (Function Calling)
-* **目標**：從正則表達式解析/純文字 Prompt 轉換成原生的 Function Calling 機制。
-* **關鍵實作**：
-  - 學習如何將 Python 函數轉換成 API 規範的 JSON Schema
-  - 使用 Gemini / OpenAI 的 Native Function Calling
-  - 提升工具調用的穩定性與結構化參數解析
+## 平台差異（Claude Code / Codex / OpenCode）
 
-### 📍 Stage 3: 記憶與狀態管理 (Memory & State)
-* **目標**：讓 Agent 擁有短期記憶（對話歷史）與長期記憶（用戶偏好/外部資料庫）。
-* **關鍵實作**：
-  - 實作滑動視窗 (Sliding Window) 或摘要型記憶以避免 Token 爆炸
-  - 儲存對話歷史到本地 JSON / SQLite
-  - 建立簡單的用戶 Profile 記憶
+- Claude Code 會自動讀 `CLAUDE.md`；Codex 與 OpenCode 讀本檔（`agents.md` / `AGENTS.md`），請在開工時自行把 `CLAUDE.md` 讀進來。
+- 技能安裝路徑不同：Claude Code `~/.claude/skills/`、Codex `~/.agents/skills/`、OpenCode `~/.config/opencode/skills/`；本 repo 本身不含技能，只有腳本。
+- 摘要與整理逐字稿時，用任一支援長文的模型即可；單支影片逐字稿可能超過數萬字，必要時分段處理。
+- 排程（每週整理）在各平台做法不同：Claude Code 用排程任務或 `/loop`，Codex / OpenCode 請用系統排程（cron / 工作排程器）觸發。
 
-### 📍 Stage 4: 檢索增強生成 (RAG) 整合
-* **目標**：讓 Agent 能查閱外部私有文件，回答專業領域問題。
-* **關鍵實作**：
-  - 文件切片 (Chunking) 與向量化 (Embedding)
-  - 串接 Vector Database (如 ChromaDB, FAISS)
-  - 實作「檢索工具」供 Agent 自主調用
+## 禁止事項
 
-### 📍 Stage 5: 多 Agent 協作 (Multi-Agent System)
-* **目標**：將複雜任務拆解，讓多個不同角色的 Agent 協同合作完成任務。
-* **關鍵實作**：
-  - 角色定義 (Role Playing) 與任務分配
-  - 實作路由機制 (Routing) 或群聊機制 (Group Chat)
-  - 引入人類反饋機制 (Human-in-the-loop)
-
----
-
-## 🛠️ 開發環境與架構
-
-* **程式語言**：Python 3.10+
-* **核心依賴**：
-  - `google-generativeai` (使用 Gemini-2.5-flash / Gemini-1.5-flash 作為大腦)
-  - `python-dotenv` (環境變數管理)
-  - `colorama` (終端機彩化)
-* **專案目錄架構**：
-  - [x] `README.md` - 專案導覽與概念說明
-  - [x] `agents.md` - 本工作藍圖
-  - [ ] `requirements.txt` - 依賴包定義
-  - [ ] `tools.py` - 自訂工具庫
-  - [ ] `simple_agent.py` - ReAct 核心邏輯
+- 不改寫、不刪除 `Clipping/` 與 `創作庫/` 內任何檔案。
+- 回答三師爸的觀點或影片內容前，必須先查 `Clipping/`，不得憑空推測。
+- 不把 `subtitles/`、`*.vtt`、影音檔加進 git（見 `.gitignore`）。
+- 不在 repo 內放 API 金鑰或個人音檔。
