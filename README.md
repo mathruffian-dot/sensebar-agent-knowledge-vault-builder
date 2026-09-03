@@ -62,8 +62,8 @@ Once the knowledge base is populated:
 ## 📄 Scripts in this Repository
 
 The scripts are located at the root of the workspace:
-* [extract_videos.py](file:///c:/2026AI_agent/AI_AgentEP01_用 Agent 來學習 Agent/extract_videos.py)
-* [download_all_subs.py](file:///c:/2026AI_agent/AI_AgentEP01_用 Agent 來學習 Agent/download_all_subs.py)
+* [extract_videos.py](extract_videos.py)
+* [download_all_subs.py](download_all_subs.py)
 
 ---
 
